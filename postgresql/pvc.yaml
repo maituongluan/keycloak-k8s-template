@@ -1,0 +1,11 @@
+kind: PersistentVolumeClaim # Create PVC
+apiVersion: v1
+metadata:
+  name: postgresql-data-claim # Sets name of PV
+spec:
+  storageClassName: managed-nfs4-storage
+  accessModes:
+    - ReadWriteOnce # Sets read and write access
+  resources:
+    requests:
+      storage: 100Mi # Sets volume size

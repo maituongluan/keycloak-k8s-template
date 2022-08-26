@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgresql-svc
+spec:
+  ports:
+  - name: postgresql
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: postgresql-svc
+  type: ClusterIP

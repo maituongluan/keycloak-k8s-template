@@ -1,0 +1,68 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: postgresql
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      volumes:
+        - name: postgres-directory
+          persistentVolumeClaim:
+            claimName: postgresql-data-claim
+      containers:
+      - name: postgresql
+        # this image provided permission to folder
+        image: quay.io/centos7/postgresql-13-centos7
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        # env:
+        # - name: POSTGRES_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: postgres-secret
+        #       key:
+        envFrom:
+        - configMapRef:
+            name: postgres-config
+        volumeMounts:
+          - name: postgres-directory
+            mountPath: /var/lib/postgresql/data
+        resources:
+          requests:
+            memory: 0Mi
+            cpu: 0m
+          limits:
+            memory: 50Mi
+            cpu: 10m
+        # readinessProbe:
+        #   httpGet:
+        #     path: /api/info
+        #     port: 5432
+        #     scheme: HTTP
+        #   initialDelaySeconds: 5
+        #   timeoutSeconds: 1
+        #   periodSeconds: 10
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        # livenessProbe:
+        #   httpGet:
+        #     path: /api/info
+        #     port: 5432
+        #     scheme: HTTP
+        #   initialDelaySeconds: 5
+        #   timeoutSeconds: 1
+        #   periodSeconds: 10
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        imagePullPolicy: "IfNotPresent"
+      restartPolicy: "Always"
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
