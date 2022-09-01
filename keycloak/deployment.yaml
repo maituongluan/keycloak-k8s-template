@@ -1,0 +1,75 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: keycloak
+spec:
+  selector:
+    matchLabels:
+      app: keycloak
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      # volumes:
+      #   - name: postgres-directory
+      #     persistentVolumeClaim:
+      #       claimName: keycloak-data-claim
+      containers:
+      - name: keycloak
+        # this image provided permission to folder
+        image: bitnami/keycloak:18
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        env:
+        - name: KEYCLOAK_DATABASE_HOST
+          value: postgresql.luan-figure-out.svc.cluster.local
+        - name: KEYCLOAK_ADMIN_USER
+          value: admin
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          value: '123123'
+        - name: KEYCLOAK_DATABASE_USER
+          value: admin
+        - name: KEYCLOAK_DATABASE_PASSWORD
+          value: '123123'
+        - name: KEYCLOAK_DATABASE_NAME
+          value: keycloak
+        # envFrom:
+        # - configMapRef:
+        #     name: postgres-config
+        # volumeMounts:
+        #   - name: postgres-directory
+        #     mountPath: /var/lib/keycloak/data
+        resources:
+          requests:
+            memory: 0
+            cpu: 0
+          limits:
+            memory: 1024Mi
+            cpu: 100m
+        # readinessProbe:
+        #   httpGet:
+        #     path: /api/info
+        #     port: 8080
+        #     scheme: HTTP
+        #   initialDelaySeconds: 5
+        #   timeoutSeconds: 1
+        #   periodSeconds: 10
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        # livenessProbe:
+        #   httpGet:
+        #     path: /api/info
+        #     port: 8080
+        #     scheme: HTTP
+        #   initialDelaySeconds: 5
+        #   timeoutSeconds: 1
+        #   periodSeconds: 10
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        imagePullPolicy: "IfNotPresent"
+      restartPolicy: "Always"
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
