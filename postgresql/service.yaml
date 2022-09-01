@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: postgresql-svc
+  name: postgresql
 spec:
   ports:
   - name: postgresql
@@ -9,5 +9,5 @@ spec:
     protocol: TCP
     targetPort: 5432
   selector:
-    app: postgresql-svc
+    app: postgresql
   type: ClusterIP
