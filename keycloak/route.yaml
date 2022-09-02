@@ -8,3 +8,6 @@ spec:
   to:
     kind: Service
     name: keycloak
+  tls:
+    # insecureEdgeTerminationPolicy: Redirect
+    termination: edge
